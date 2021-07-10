@@ -28,19 +28,8 @@ yarn install lettersanitizer
 ## Example usage
 
 ```ts
-export function sanitize(
-  html: string,
-  text?: string,
-  options?: SanitizerOptions
-) {
-  let contents = html ?? '';
-  if (contents?.length === 0 && text) {
-    contents = sanitizeText(text)
-      .split('\n')
-      .map(line => '<p>' + line + '</p>')
-      .join('\n');
-  }
+import { sanitize } from 'lettersanitizer';
 
-  return sanitizeHtml(contents, options ?? {});
-}
+sanitize('<b>test</b><script>test</script>', '', { id: 'test' });
+// <div id="test"><b>test</b></div>
 ```
