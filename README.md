@@ -33,3 +33,23 @@ import { sanitize } from 'lettersanitizer';
 sanitize('<b>test</b><script>test</script>', '', { id: 'test' });
 // <div id="test"><b>test</b></div>
 ```
+
+### sanitize function
+
+**lettersanitizer** exposes a `sanitize` function that uses DOMParser to sanitize the HTML content of messages and returns HTML text.
+
+`text` is used for fallback text in case of no HTML source being available. Plain text in that case is processed into safe HTML output.
+
+```ts
+interface SanitizerOptions {
+  id?: string;
+  dropAllHtmlTags?: boolean;
+  rewriteExternalResources?: (url: string) => string;
+  rewriteExternalLinks?: (url: string) => string;
+  allowedSchemas?: string[];
+  preserveCssPriority?: boolean;
+  noWrapper?: boolean;
+}
+
+function sanitize(html: string, text?: string, options?: SanitizerOptions);
+```
