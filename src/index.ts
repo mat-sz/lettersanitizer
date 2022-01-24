@@ -256,9 +256,12 @@ function sanitizeHtml(
         rewriteExternalResources
       );
 
-      // Add rel="noopener noreferrer" to <a>
       if (tagName === 'a') {
+        // Add rel="noopener noreferrer" to <a>
         element.setAttribute('rel', 'noopener noreferrer');
+
+        // Add target="_blank" to <a>
+        element.setAttribute('target', '_blank');
       }
     } else {
       element.insertAdjacentHTML('afterend', element.innerHTML);

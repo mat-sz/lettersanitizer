@@ -76,7 +76,7 @@ describe('sanitizer', () => {
         rewriteExternalLinks: (url: String) => './redirect?url=' + url,
       })
     ).toBe(
-      '<div id="test"><a href="./redirect?url=https://example.com/" rel="noopener noreferrer"></a></div>'
+      '<div id="test"><a href="./redirect?url=https://example.com/" rel="noopener noreferrer" target="_blank"></a></div>'
     );
   });
 
@@ -100,7 +100,9 @@ describe('sanitizer', () => {
       sanitize('<a href="ftp://test.com"></a>', '', {
         id: 'test',
       })
-    ).toBe('<div id="test"><a rel="noopener noreferrer"></a></div>');
+    ).toBe(
+      '<div id="test"><a rel="noopener noreferrer" target="_blank"></a></div>'
+    );
 
     expect(
       sanitize(
@@ -119,7 +121,7 @@ describe('sanitizer', () => {
         id: 'test',
       })
     ).toBe(
-      '<div id="test"><a href="http://test.com" rel="noopener noreferrer"></a></div>'
+      '<div id="test"><a href="http://test.com" rel="noopener noreferrer" target="_blank"></a></div>'
     );
 
     expect(
@@ -133,7 +135,7 @@ describe('sanitizer', () => {
         id: 'test',
       })
     ).toBe(
-      '<div id="test"><a href="mailto:test@example.com" rel="noopener noreferrer"></a></div>'
+      '<div id="test"><a href="mailto:test@example.com" rel="noopener noreferrer" target="_blank"></a></div>'
     );
   });
 
@@ -144,7 +146,7 @@ describe('sanitizer', () => {
         allowedSchemas: ['http'],
       })
     ).toBe(
-      '<div id="test"><a href="http://test.com" rel="noopener noreferrer"></a></div>'
+      '<div id="test"><a href="http://test.com" rel="noopener noreferrer" target="_blank"></a></div>'
     );
 
     expect(
@@ -168,7 +170,7 @@ describe('sanitizer', () => {
         allowedSchemas: ['http'],
       })
     ).toBe(
-      '<div id="test"><a href="HTTP://test.com" rel="noopener noreferrer"></a></div>'
+      '<div id="test"><a href="HTTP://test.com" rel="noopener noreferrer" target="_blank"></a></div>'
     );
 
     expect(
@@ -177,7 +179,7 @@ describe('sanitizer', () => {
         allowedSchemas: ['HTTP'],
       })
     ).toBe(
-      '<div id="test"><a href="http://test.com" rel="noopener noreferrer"></a></div>'
+      '<div id="test"><a href="http://test.com" rel="noopener noreferrer" target="_blank"></a></div>'
     );
 
     expect(
@@ -186,7 +188,7 @@ describe('sanitizer', () => {
         allowedSchemas: ['HTTP'],
       })
     ).toBe(
-      '<div id="test"><a href="htTP://test.com" rel="noopener noreferrer"></a></div>'
+      '<div id="test"><a href="htTP://test.com" rel="noopener noreferrer" target="_blank"></a></div>'
     );
 
     expect(
@@ -195,7 +197,7 @@ describe('sanitizer', () => {
         allowedSchemas: ['http'],
       })
     ).toBe(
-      '<div id="test"><a href="HTtp://test.com" rel="noopener noreferrer"></a></div>'
+      '<div id="test"><a href="HTtp://test.com" rel="noopener noreferrer" target="_blank"></a></div>'
     );
   });
 
@@ -204,7 +206,9 @@ describe('sanitizer', () => {
       sanitize('<a></a>', '', {
         id: 'test',
       })
-    ).toBe('<div id="test"><a rel="noopener noreferrer"></a></div>');
+    ).toBe(
+      '<div id="test"><a rel="noopener noreferrer" target="_blank"></a></div>'
+    );
 
     expect(
       sanitize('<img />', '', {
