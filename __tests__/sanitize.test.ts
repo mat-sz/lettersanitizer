@@ -7,10 +7,10 @@ import { sanitize } from '../src';
 describe('sanitizer', () => {
   it('wraps contents in a div', () => {
     expect(
-      sanitize('<a>test</a>', '', {
+      sanitize('<span>test</span>', '', {
         id: 'test',
       })
-    ).toBe('<div id="test"><a rel="noopener noreferrer">test</a></div>');
+    ).toBe('<div id="test"><span>test</span></div>');
   });
 
   it('removes non-whitelisted tags while preserving their contents', () => {
@@ -39,12 +39,10 @@ describe('sanitizer', () => {
 
   it('removes non-whitelisted CSS properties', () => {
     expect(
-      sanitize('<a style="pointer-events: all;">test</a>', '', {
+      sanitize('<span style="pointer-events: all;">test</span>', '', {
         id: 'test',
       })
-    ).toBe(
-      '<div id="test"><a style="" rel="noopener noreferrer">test</a></div>'
-    );
+    ).toBe('<div id="test"><span style="">test</span></div>');
   });
 
   it('removes blacklisted tags and their contents', () => {
@@ -85,7 +83,7 @@ describe('sanitizer', () => {
   it('rewrites URLs on CSS url()', () => {
     expect(
       sanitize(
-        '<a style="background: url(\'https://example.com/image.jpg\')"></a>',
+        '<span style="background: url(\'https://example.com/image.jpg\')"></span>',
         '',
         {
           id: 'test',
@@ -93,7 +91,7 @@ describe('sanitizer', () => {
         }
       )
     ).toBe(
-      '<div id="test"><a style="background: url(./redirect?url=https://example.com/image.jpg);" rel="noopener noreferrer"></a></div>'
+      '<div id="test"><span style="background: url(./redirect?url=https://example.com/image.jpg);"></span></div>'
     );
   });
 
@@ -201,7 +199,7 @@ describe('sanitizer', () => {
     );
   });
 
-  it('adds rel="noopener noreferrer" to <a> (and only it)', () => {
+  it('adds rel="noopener noreferrer" to <a> (and only <a>)', () => {
     expect(
       sanitize('<a></a>', '', {
         id: 'test',
