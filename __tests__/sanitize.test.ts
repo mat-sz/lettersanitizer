@@ -295,4 +295,59 @@ b {background: red;}</style>`,
     ).toBe(`<style>a {background: red;}
 b {background: red;}</style>`);
   });
+
+  it('removes @keyframes rules from CSS', () => {
+    expect(
+      sanitize(
+        `<style>@keyframes test {
+          0% {
+              transform: rotate(0deg);
+          }
+
+          100% {
+              transform: rotate(360deg);
+          }
+        }</style>`,
+        '',
+        { noWrapper: true, preserveCssPriority: false }
+      )
+    ).toBe(`<style></style>`);
+  });
+
+  it('removes @supports rules from CSS', () => {
+    expect(
+      sanitize(
+        `<style>@supports (display: grid) {
+            div {
+              display: grid;
+            }
+          }</style>`,
+        '',
+        { noWrapper: true, preserveCssPriority: false }
+      )
+    ).toBe(`<style></style>`);
+  });
+
+  it('removes @font-face rules from CSS', () => {
+    expect(
+      sanitize(
+        `<style>@font-face {
+            font-family: "Open Sans";
+            src: url("/fonts/OpenSans-Regular-webfont.woff2") format("woff2"),
+                 url("/fonts/OpenSans-Regular-webfont.woff") format("woff");
+          }</style>`,
+        '',
+        { noWrapper: true, preserveCssPriority: false }
+      )
+    ).toBe(`<style></style>`);
+  });
+
+  it('removes @import rules from CSS', () => {
+    expect(
+      sanitize(`<style>@import 'custom.css';</style>`, '', {
+        noWrapper: true,
+        preserveCssPriority: false,
+      })
+    ).toBe(`<style></style>`);
+  });
 });

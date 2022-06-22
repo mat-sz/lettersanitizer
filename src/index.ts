@@ -307,7 +307,9 @@ function sanitizeHtml(
           rewriteExternalResources
         );
         newRules.push(rule);
-      } else if ('cssRules' in rule) {
+      } else if ('cssRules' in rule && 'media' in rule) {
+        // According to https://www.caniemail.com/,
+        // out of all at-rules, Gmail only supports @media.
         const mediaRule = (rule as any) as CSSMediaRule;
         const newRulesMedia: CSSRule[] = [];
 
