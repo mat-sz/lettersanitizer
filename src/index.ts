@@ -69,15 +69,8 @@ function sanitizeCssValue(
     .trim()
     .replace(/expression\((.*?)\)/g, '')
     .replace(/url\(["']?(.*?)["']?\)/g, (match, url) => {
-      let quote = '';
-      if (match.startsWith('url("')) {
-        quote = '"';
-      } else if (match.startsWith("url('")) {
-        quote = "'";
-      }
-
       if (rewriteExternalResources) {
-        return 'url(' + quote + rewriteExternalResources(url) + quote + ')';
+        return `url("${encodeURI(rewriteExternalResources(decodeURI(url)))}")`;
       } else if (allowedSchemas.includes(url.toLowerCase().split(':')[0])) {
         return match;
       } else {
