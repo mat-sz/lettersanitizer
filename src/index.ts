@@ -27,6 +27,7 @@ export interface SanitizerOptions {
 
   /**
    * Allowed schemas, default: ['http', 'https', 'mailto'].
+   * Does not apply if rewriteExternalResources and/or rewriteExternalLinks are enabled.
    */
   allowedSchemas?: string[];
 
@@ -75,12 +76,10 @@ function sanitizeCssValue(
         quote = "'";
       }
 
-      if (allowedSchemas.includes(url.toLowerCase().split(':')[0])) {
-        if (rewriteExternalResources) {
-          return 'url(' + quote + rewriteExternalResources(url) + quote + ')';
-        } else {
-          return match;
-        }
+      if (rewriteExternalResources) {
+        return 'url(' + quote + rewriteExternalResources(url) + quote + ')';
+      } else if (allowedSchemas.includes(url.toLowerCase().split(':')[0])) {
+        return match;
       } else {
         return '';
       }
@@ -238,12 +237,14 @@ function sanitizeHtml(
           );
         } else if (attribute === 'href' || attribute === 'src') {
           const value = element.getAttribute(attribute) ?? '';
-          if (!allowedSchemas.includes(value.toLowerCase().split(':')[0])) {
-            element.removeAttribute(attribute);
-          } else if (attribute === 'href' && rewriteExternalLinks) {
+          if (attribute === 'href' && rewriteExternalLinks) {
             element.setAttribute(attribute, rewriteExternalLinks(value));
           } else if (attribute === 'src' && rewriteExternalResources) {
             element.setAttribute(attribute, rewriteExternalResources(value));
+          } else if (
+            !allowedSchemas.includes(value.toLowerCase().split(':')[0])
+          ) {
+            element.removeAttribute(attribute);
           }
         }
       }

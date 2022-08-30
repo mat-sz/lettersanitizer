@@ -350,4 +350,26 @@ b {background: red;}</style>`);
       })
     ).toBe(`<style></style>`);
   });
+
+  it('rewrites URLs on <a> elements regardless of the schema', () => {
+    expect(
+      sanitize('<a href="./test"></a>', '', {
+        id: 'test',
+        rewriteExternalLinks: (url: String) => './redirect?url=' + url,
+      })
+    ).toBe(
+      '<div id="test"><a href="./redirect?url=./test" rel="noopener noreferrer" target="_blank"></a></div>'
+    );
+  });
+
+  it('rewrites URLs on CSS url() regardless of the schema', () => {
+    expect(
+      sanitize('<span style="background: url(\'./image.jpg\')"></span>', '', {
+        id: 'test',
+        rewriteExternalResources: (url: String) => './redirect?url=' + url,
+      })
+    ).toBe(
+      '<div id="test"><span style="background: url(./redirect?url=./image.jpg);"></span></div>'
+    );
+  });
 });
