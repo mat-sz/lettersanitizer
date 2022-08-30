@@ -1,6 +1,6 @@
 {
   "name": "lettersanitizer",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "DOM-based HTML email sanitizer for in-browser email rendering.",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
