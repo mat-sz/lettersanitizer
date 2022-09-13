@@ -1,7 +1,3 @@
-/**
- * @jest-environment jsdom
- */
-
 import { sanitize } from '../src';
 
 describe('sanitizer', () => {
