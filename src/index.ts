@@ -2,7 +2,7 @@ import {
   allowedTags,
   allowedCssProperties,
   removeWithContents,
-} from './constants';
+} from './constants.js';
 
 export interface SanitizerOptions {
   /**
@@ -304,7 +304,7 @@ function sanitizeHtml(
       } else if ('cssRules' in rule && 'media' in rule) {
         // According to https://www.caniemail.com/,
         // out of all at-rules, Gmail only supports @media.
-        const mediaRule = (rule as any) as CSSMediaRule;
+        const mediaRule = rule as any as CSSMediaRule;
         const newRulesMedia: CSSRule[] = [];
 
         for (let i = 0; i < mediaRule.cssRules.length; i++) {
