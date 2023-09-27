@@ -5,3 +5,6 @@ yarn-error.log
 yarn.lock
 .prettierrc
 .github
+coverage
+vite*js
+vitest.config.ts

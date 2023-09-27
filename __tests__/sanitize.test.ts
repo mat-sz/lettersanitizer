@@ -1,27 +1,27 @@
-import { sanitize } from '../src';
+import { sanitize } from '../src/index.js';
 
 describe('sanitizer', () => {
   it('wraps contents in a div', () => {
     expect(
       sanitize('<span>test</span>', '', {
         id: 'test',
-      })
+      }),
     ).toBe('<div id="test"><span>test</span></div>');
   });
 
   it('removes non-whitelisted tags while preserving their contents', () => {
     expect(sanitize('<b>test</b><test>test</test>', '', { id: 'test' })).toBe(
-      '<div id="test"><b>test</b>test</div>'
+      '<div id="test"><b>test</b>test</div>',
     );
 
     expect(
       sanitize(
         '<b>test</b><table><test>test</test><thead><tr><th>test</th></tr></thead></table>',
         '',
-        { id: 'test' }
-      )
+        { id: 'test' },
+      ),
     ).toBe(
-      '<div id="test"><b>test</b>test<table><thead><tr><th>test</th></tr></thead></table></div>'
+      '<div id="test"><b>test</b>test<table><thead><tr><th>test</th></tr></thead></table></div>',
     );
   });
 
@@ -29,7 +29,7 @@ describe('sanitizer', () => {
     expect(
       sanitize('<img onerror="alert(\'XSS\')" src="invalid:" />', '', {
         id: 'test',
-      })
+      }),
     ).toBe('<div id="test"><img></div>');
   });
 
@@ -37,31 +37,31 @@ describe('sanitizer', () => {
     expect(
       sanitize('<span style="pointer-events: all;">test</span>', '', {
         id: 'test',
-      })
+      }),
     ).toBe('<div id="test"><span style="">test</span></div>');
   });
 
   it('removes blacklisted tags and their contents', () => {
     expect(
-      sanitize('<b>test</b><script>test</script>', '', { id: 'test' })
+      sanitize('<b>test</b><script>test</script>', '', { id: 'test' }),
     ).toBe('<div id="test"><b>test</b></div>');
     expect(
-      sanitize('<b>test</b><noscript>test</noscript>', '', { id: 'test' })
+      sanitize('<b>test</b><noscript>test</noscript>', '', { id: 'test' }),
     ).toBe('<div id="test"><b>test</b></div>');
     expect(
-      sanitize('<b>test</b><noembed>test</noembed>', '', { id: 'test' })
+      sanitize('<b>test</b><noembed>test</noembed>', '', { id: 'test' }),
     ).toBe('<div id="test"><b>test</b></div>');
     expect(
-      sanitize('<b>test</b><iframe>test</iframe>', '', { id: 'test' })
+      sanitize('<b>test</b><iframe>test</iframe>', '', { id: 'test' }),
     ).toBe('<div id="test"><b>test</b></div>');
     expect(
-      sanitize('<b>test</b><textarea>test</textarea>', '', { id: 'test' })
+      sanitize('<b>test</b><textarea>test</textarea>', '', { id: 'test' }),
     ).toBe('<div id="test"><b>test</b></div>');
     expect(sanitize('<b>test</b><title>test</title>', '', { id: 'test' })).toBe(
-      '<div id="test"><b>test</b></div>'
+      '<div id="test"><b>test</b></div>',
     );
     expect(sanitize('<b>test</b><svg><rect /></svg>', '', { id: 'test' })).toBe(
-      '<div id="test"><b>test</b></div>'
+      '<div id="test"><b>test</b></div>',
     );
   });
 
@@ -70,9 +70,9 @@ describe('sanitizer', () => {
       sanitize('<a href="https://example.com/"></a>', '', {
         id: 'test',
         rewriteExternalLinks: (url: String) => './redirect?url=' + url,
-      })
+      }),
     ).toBe(
-      '<div id="test"><a href="./redirect?url=https://example.com/" rel="noopener noreferrer" target="_blank"></a></div>'
+      '<div id="test"><a href="./redirect?url=https://example.com/" rel="noopener noreferrer" target="_blank"></a></div>',
     );
   });
 
@@ -84,10 +84,10 @@ describe('sanitizer', () => {
         {
           id: 'test',
           rewriteExternalResources: (url: String) => './redirect?url=' + url,
-        }
-      )
+        },
+      ),
     ).toBe(
-      '<div id="test"><span style="background: url(./redirect?url=https://example.com/image.jpg);"></span></div>'
+      '<div id="test"><span style="background: url(./redirect?url=https://example.com/image.jpg);"></span></div>',
     );
   });
 
@@ -95,9 +95,9 @@ describe('sanitizer', () => {
     expect(
       sanitize('<a href="ftp://test.com"></a>', '', {
         id: 'test',
-      })
+      }),
     ).toBe(
-      '<div id="test"><a rel="noopener noreferrer" target="_blank"></a></div>'
+      '<div id="test"><a rel="noopener noreferrer" target="_blank"></a></div>',
     );
 
     expect(
@@ -106,8 +106,8 @@ describe('sanitizer', () => {
         '',
         {
           id: 'test',
-        }
-      )
+        },
+      ),
     ).toBe('<div id="test"><img></div>');
   });
 
@@ -115,23 +115,23 @@ describe('sanitizer', () => {
     expect(
       sanitize('<a href="http://test.com"></a>', '', {
         id: 'test',
-      })
+      }),
     ).toBe(
-      '<div id="test"><a href="http://test.com" rel="noopener noreferrer" target="_blank"></a></div>'
+      '<div id="test"><a href="http://test.com" rel="noopener noreferrer" target="_blank"></a></div>',
     );
 
     expect(
       sanitize('<img src="https://example.com/img.png" />', '', {
         id: 'test',
-      })
+      }),
     ).toBe('<div id="test"><img src="https://example.com/img.png"></div>');
 
     expect(
       sanitize('<a href="mailto:test@example.com"></a>', '', {
         id: 'test',
-      })
+      }),
     ).toBe(
-      '<div id="test"><a href="mailto:test@example.com" rel="noopener noreferrer" target="_blank"></a></div>'
+      '<div id="test"><a href="mailto:test@example.com" rel="noopener noreferrer" target="_blank"></a></div>',
     );
   });
 
@@ -140,9 +140,9 @@ describe('sanitizer', () => {
       sanitize('<a href="http://test.com"></a>', '', {
         id: 'test',
         allowedSchemas: ['http'],
-      })
+      }),
     ).toBe(
-      '<div id="test"><a href="http://test.com" rel="noopener noreferrer" target="_blank"></a></div>'
+      '<div id="test"><a href="http://test.com" rel="noopener noreferrer" target="_blank"></a></div>',
     );
 
     expect(
@@ -152,10 +152,10 @@ describe('sanitizer', () => {
         {
           id: 'test',
           allowedSchemas: ['data'],
-        }
-      )
+        },
+      ),
     ).toBe(
-      '<div id="test"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg=="></div>'
+      '<div id="test"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg=="></div>',
     );
   });
 
@@ -164,36 +164,36 @@ describe('sanitizer', () => {
       sanitize('<a href="HTTP://test.com"></a>', '', {
         id: 'test',
         allowedSchemas: ['http'],
-      })
+      }),
     ).toBe(
-      '<div id="test"><a href="HTTP://test.com" rel="noopener noreferrer" target="_blank"></a></div>'
+      '<div id="test"><a href="HTTP://test.com" rel="noopener noreferrer" target="_blank"></a></div>',
     );
 
     expect(
       sanitize('<a href="http://test.com"></a>', '', {
         id: 'test',
         allowedSchemas: ['HTTP'],
-      })
+      }),
     ).toBe(
-      '<div id="test"><a href="http://test.com" rel="noopener noreferrer" target="_blank"></a></div>'
+      '<div id="test"><a href="http://test.com" rel="noopener noreferrer" target="_blank"></a></div>',
     );
 
     expect(
       sanitize('<a href="htTP://test.com"></a>', '', {
         id: 'test',
         allowedSchemas: ['HTTP'],
-      })
+      }),
     ).toBe(
-      '<div id="test"><a href="htTP://test.com" rel="noopener noreferrer" target="_blank"></a></div>'
+      '<div id="test"><a href="htTP://test.com" rel="noopener noreferrer" target="_blank"></a></div>',
     );
 
     expect(
       sanitize('<a href="HTtp://test.com"></a>', '', {
         id: 'test',
         allowedSchemas: ['http'],
-      })
+      }),
     ).toBe(
-      '<div id="test"><a href="HTtp://test.com" rel="noopener noreferrer" target="_blank"></a></div>'
+      '<div id="test"><a href="HTtp://test.com" rel="noopener noreferrer" target="_blank"></a></div>',
     );
   });
 
@@ -201,15 +201,15 @@ describe('sanitizer', () => {
     expect(
       sanitize('<a></a>', '', {
         id: 'test',
-      })
+      }),
     ).toBe(
-      '<div id="test"><a rel="noopener noreferrer" target="_blank"></a></div>'
+      '<div id="test"><a rel="noopener noreferrer" target="_blank"></a></div>',
     );
 
     expect(
       sanitize('<img />', '', {
         id: 'test',
-      })
+      }),
     ).toBe('<div id="test"><img></div>');
   });
 
@@ -217,12 +217,12 @@ describe('sanitizer', () => {
     expect(
       sanitize('', 'test', {
         id: 'test',
-      })
+      }),
     ).toBe('<div id="test"><p>test</p></div>');
     expect(
       sanitize('', 'test\ntest', {
         id: 'test',
-      })
+      }),
     ).toBe('<div id="test"><p>test</p>\n<p>test</p></div>');
   });
 
@@ -233,8 +233,8 @@ describe('sanitizer', () => {
         '',
         {
           id: 'test',
-        }
-      )
+        },
+      ),
     ).toBe('<div id="test"><style>#test p {color: red;}</style></div>');
   });
 
@@ -242,7 +242,7 @@ describe('sanitizer', () => {
     expect(
       sanitize('<div><!-- hello --></div>', '', {
         id: 'test',
-      })
+      }),
     ).toBe('<div id="test"><div></div></div>');
   });
 
@@ -250,7 +250,7 @@ describe('sanitizer', () => {
     expect(
       sanitize('<div class="foo"></div>', '', {
         noWrapper: true,
-      })
+      }),
     ).toBe('<div class="foo"></div>');
   });
 
@@ -261,8 +261,8 @@ describe('sanitizer', () => {
 .test {background: red;}
 #test {background: red;}</style>`,
         '',
-        { id: 'test' }
-      )
+        { id: 'test' },
+      ),
     ).toBe(`<div id="test"><style>#test a {background: red !important;}
 #test .test_test {background: red;}
 #test #test_test {background: red;}</style></div>`);
@@ -274,8 +274,8 @@ describe('sanitizer', () => {
         `<style>a {background: red !important;}
 b {background: red;}</style>`,
         '',
-        { noWrapper: true }
-      )
+        { noWrapper: true },
+      ),
     ).toBe(`<style>a {background: red !important;}
 b {background: red;}</style>`);
   });
@@ -286,8 +286,8 @@ b {background: red;}</style>`);
         `<style>a {background: red !important;}
 b {background: red;}</style>`,
         '',
-        { noWrapper: true, preserveCssPriority: false }
-      )
+        { noWrapper: true, preserveCssPriority: false },
+      ),
     ).toBe(`<style>a {background: red;}
 b {background: red;}</style>`);
   });
@@ -305,8 +305,8 @@ b {background: red;}</style>`);
           }
         }</style>`,
         '',
-        { noWrapper: true, preserveCssPriority: false }
-      )
+        { noWrapper: true, preserveCssPriority: false },
+      ),
     ).toBe(`<style></style>`);
   });
 
@@ -319,8 +319,8 @@ b {background: red;}</style>`);
             }
           }</style>`,
         '',
-        { noWrapper: true, preserveCssPriority: false }
-      )
+        { noWrapper: true, preserveCssPriority: false },
+      ),
     ).toBe(`<style></style>`);
   });
 
@@ -333,8 +333,8 @@ b {background: red;}</style>`);
                  url("/fonts/OpenSans-Regular-webfont.woff") format("woff");
           }</style>`,
         '',
-        { noWrapper: true, preserveCssPriority: false }
-      )
+        { noWrapper: true, preserveCssPriority: false },
+      ),
     ).toBe(`<style></style>`);
   });
 
@@ -343,7 +343,7 @@ b {background: red;}</style>`);
       sanitize(`<style>@import 'custom.css';</style>`, '', {
         noWrapper: true,
         preserveCssPriority: false,
-      })
+      }),
     ).toBe(`<style></style>`);
   });
 
@@ -352,9 +352,9 @@ b {background: red;}</style>`);
       sanitize('<a href="./test"></a>', '', {
         id: 'test',
         rewriteExternalLinks: (url: String) => './redirect?url=' + url,
-      })
+      }),
     ).toBe(
-      '<div id="test"><a href="./redirect?url=./test" rel="noopener noreferrer" target="_blank"></a></div>'
+      '<div id="test"><a href="./redirect?url=./test" rel="noopener noreferrer" target="_blank"></a></div>',
     );
   });
 
@@ -363,9 +363,9 @@ b {background: red;}</style>`);
       sanitize('<span style="background: url(\'./image.jpg\')"></span>', '', {
         id: 'test',
         rewriteExternalResources: (url: String) => './redirect?url=' + url,
-      })
+      }),
     ).toBe(
-      '<div id="test"><span style="background: url(./redirect?url=./image.jpg);"></span></div>'
+      '<div id="test"><span style="background: url(./redirect?url=./image.jpg);"></span></div>',
     );
   });
 });

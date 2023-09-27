@@ -5,7 +5,7 @@ DOM-based HTML email sanitizer for in-browser email rendering.
 </p>
 
 <p align="center">
-<img alt="workflow" src="https://img.shields.io/github/workflow/status/mat-sz/lettersanitizer/Node.js%20CI%20(yarn)">
+<img alt="workflow" src="https://img.shields.io/github/actions/workflow/status/mat-sz/lettersanitizer/node.js.yml?branch=main">
 <a href="https://npmjs.com/package/lettersanitizer">
 <img alt="npm" src="https://img.shields.io/npm/v/lettersanitizer">
 <img alt="npm" src="https://img.shields.io/npm/dw/lettersanitizer">
