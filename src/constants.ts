@@ -53,6 +53,7 @@ export const allowedTags = {
     'id',
     'src',
     'style',
+    'title',
     'usemap',
     'vspace',
     'width',
