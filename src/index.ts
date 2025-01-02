@@ -1,6 +1,6 @@
 import {
   allowedTags,
-  allowedCssProperties,
+  allowedCssProperties as defaultAllowedCssProperties,
   removeWithContents,
 } from './constants.js';
 
@@ -30,6 +30,11 @@ export interface SanitizerOptions {
    * Does not apply if rewriteExternalResources and/or rewriteExternalLinks are enabled.
    */
   allowedSchemas?: string[];
+
+  /**
+   * Allowed css properties, default @see `allowedCssProperties`
+   */
+  allowedCssProperties?: string[];
 
   /**
    * Remove wrapper <div> from the output, default: false.
@@ -82,6 +87,7 @@ function sanitizeCssValue(
 function sanitizeCssStyle(
   style: CSSStyleDeclaration | undefined,
   allowedSchemas: string[],
+  allowedCssProperties: string[],
   preserveCssPriority: boolean,
   rewriteExternalResources?: (url: string) => string
 ) {
@@ -114,6 +120,7 @@ function sanitizeCssRule(
   rule: CSSStyleRule,
   id: string,
   allowedSchemas: string[],
+  allowedCssProperties: string[],
   preserveCssPriority: boolean,
   rewriteExternalResources?: (url: string) => string
 ) {
@@ -121,6 +128,7 @@ function sanitizeCssRule(
   sanitizeCssStyle(
     rule.style,
     allowedSchemas,
+    allowedCssProperties,
     preserveCssPriority,
     rewriteExternalResources
   );
@@ -141,6 +149,7 @@ function sanitizeHtml(
           .map(() => ((Math.random() * 25) % 25) + 65)
       ),
     allowedSchemas = defaultAllowedSchemas,
+    allowedCssProperties = defaultAllowedCssProperties,
     preserveCssPriority = true,
     noWrapper = false,
   }: SanitizerOptions
@@ -246,6 +255,7 @@ function sanitizeHtml(
       sanitizeCssStyle(
         element.style,
         allowedSchemas,
+        allowedCssProperties,
         preserveCssPriority,
         rewriteExternalResources
       );
@@ -297,6 +307,7 @@ function sanitizeHtml(
           rule,
           id,
           allowedSchemas,
+          allowedCssProperties,
           preserveCssPriority,
           rewriteExternalResources
         );
@@ -315,6 +326,7 @@ function sanitizeHtml(
               rule,
               id,
               allowedSchemas,
+              allowedCssProperties,
               preserveCssPriority,
               rewriteExternalResources
             );
@@ -369,3 +381,5 @@ export function sanitize(
 
   return sanitizeHtml(contents, options ?? {});
 }
+
+export const allowedCssProperties = defaultAllowedCssProperties;
