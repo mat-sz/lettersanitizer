@@ -68,7 +68,7 @@ function prependIdToSelectorText(selectorText: string, id: string) {
 function sanitizeCssValue(
   cssValue: string,
   allowedSchemas: string[],
-  rewriteExternalResources?: (url: string) => string
+  rewriteExternalResources?: (url: string) => string,
 ) {
   return cssValue
     .trim()
@@ -89,7 +89,7 @@ function sanitizeCssStyle(
   allowedSchemas: string[],
   allowedCssProperties: string[],
   preserveCssPriority: boolean,
-  rewriteExternalResources?: (url: string) => string
+  rewriteExternalResources?: (url: string) => string,
 ) {
   if (!style) {
     return;
@@ -108,7 +108,7 @@ function sanitizeCssStyle(
       style.setProperty(
         name,
         sanitizeCssValue(value, allowedSchemas, rewriteExternalResources),
-        preserveCssPriority ? style.getPropertyPriority(name) : undefined
+        preserveCssPriority ? style.getPropertyPriority(name) : undefined,
       );
     } else {
       style.removeProperty(name);
@@ -122,7 +122,7 @@ function sanitizeCssRule(
   allowedSchemas: string[],
   allowedCssProperties: string[],
   preserveCssPriority: boolean,
-  rewriteExternalResources?: (url: string) => string
+  rewriteExternalResources?: (url: string) => string,
 ) {
   rule.selectorText = prependIdToSelectorText(rule.selectorText, id);
   sanitizeCssStyle(
@@ -130,7 +130,7 @@ function sanitizeCssRule(
     allowedSchemas,
     allowedCssProperties,
     preserveCssPriority,
-    rewriteExternalResources
+    rewriteExternalResources,
   );
 }
 
@@ -146,13 +146,13 @@ function sanitizeHtml(
       String.fromCharCode(
         ...new Array(24)
           .fill(undefined)
-          .map(() => ((Math.random() * 25) % 25) + 65)
+          .map(() => ((Math.random() * 25) % 25) + 65),
       ),
     allowedSchemas = defaultAllowedSchemas,
     allowedCssProperties = defaultAllowedCssProperties,
     preserveCssPriority = true,
     noWrapper = false,
-  }: SanitizerOptions
+  }: SanitizerOptions,
 ): string {
   if (noWrapper) id = '';
   const doc = new DOMParser().parseFromString(input, 'text/html');
@@ -165,7 +165,7 @@ function sanitizeHtml(
   // Remove comments.
   const commentIter = doc.createNodeIterator(
     doc.documentElement,
-    NodeFilter.SHOW_COMMENT
+    NodeFilter.SHOW_COMMENT,
   );
 
   let node: Node | null;
@@ -197,7 +197,7 @@ function sanitizeHtml(
       acceptNode: () => {
         return NodeFilter.FILTER_ACCEPT;
       },
-    }
+    },
   );
 
   while ((node = elementIter.nextNode())) {
@@ -230,12 +230,12 @@ function sanitizeHtml(
               .getAttribute(attribute)
               ?.split(' ')
               .map(className => id + '_' + className)
-              .join(' ') ?? ''
+              .join(' ') ?? '',
           );
         } else if (attribute === 'id' && !noWrapper) {
           element.setAttribute(
             attribute,
-            id + '_' + (element.getAttribute(attribute) ?? '')
+            id + '_' + (element.getAttribute(attribute) ?? ''),
           );
         } else if (attribute === 'href' || attribute === 'src') {
           const value = element.getAttribute(attribute) ?? '';
@@ -257,7 +257,7 @@ function sanitizeHtml(
         allowedSchemas,
         allowedCssProperties,
         preserveCssPriority,
-        rewriteExternalResources
+        rewriteExternalResources,
       );
 
       if (tagName === 'a') {
@@ -309,7 +309,7 @@ function sanitizeHtml(
           allowedSchemas,
           allowedCssProperties,
           preserveCssPriority,
-          rewriteExternalResources
+          rewriteExternalResources,
         );
         newRules.push(rule);
       } else if ('cssRules' in rule && 'media' in rule) {
@@ -328,7 +328,7 @@ function sanitizeHtml(
               allowedSchemas,
               allowedCssProperties,
               preserveCssPriority,
-              rewriteExternalResources
+              rewriteExternalResources,
             );
             newRulesMedia.push(rule);
           }
@@ -369,7 +369,7 @@ function sanitizeText(text: string) {
 export function sanitize(
   html: string,
   text?: string,
-  options?: SanitizerOptions
+  options?: SanitizerOptions,
 ): string {
   let contents = html ?? '';
   if (contents?.length === 0 && text) {
