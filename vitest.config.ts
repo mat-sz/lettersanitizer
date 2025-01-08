@@ -4,7 +4,7 @@ import { defineConfig } from 'vitest/config';
 export default defineConfig(() => ({
   name: 'lettersanitizer',
   test: {
-    environment: 'jsdom',
+    environment: './jsdomEnv.ts',
     globals: true,
   },
 }));
