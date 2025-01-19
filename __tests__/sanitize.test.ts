@@ -368,4 +368,36 @@ b {background: red;}</style>`);
       '<div id="test"><span style="background: url(./redirect?url=./image.jpg);"></span></div>',
     );
   });
+
+  it('handles new CSS rules', () => {
+    expect(
+      sanitize(
+        `<style>
+          @namespace url(http://www.w3.org/1999/xhtml);
+          @import url(https://fonts.googleapis.com/css2?family=Bungee+Spice);
+          @font-face {
+            font-family: "Open Sans";
+            src: url("/fonts/OpenSans-Regular-webfont.woff2") format("woff2"),
+                 url("/fonts/OpenSans-Regular-webfont.woff") format("woff");
+          }
+          @container (width < 650px) {
+            .test { color: red; }
+          }
+          @supports (display: grid) {
+            .test { color: red; }
+          }
+          @keyframes example {
+            from {
+              color: green;
+            }
+            to {
+              color: red;
+            }
+          }
+        </style>`,
+        '',
+        { noWrapper: true, preserveCssPriority: false },
+      ),
+    ).toBe(`<style></style>`);
+  });
 });

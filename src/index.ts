@@ -182,23 +182,9 @@ function sanitizeHtml(
   const disallowedList = doc.querySelectorAll(removeTags.join(', '));
   disallowedList.forEach(element => element.remove());
 
-  // Move styles from head to body.
-  const styleList = doc.querySelectorAll('head > style');
-  styleList.forEach(element => {
-    doc.body.appendChild(element);
-  });
-
   // Filter other tags.
   const toRemove: Element[] = [];
-  const elementIter = doc.createNodeIterator(
-    doc.body,
-    NodeFilter.SHOW_ELEMENT,
-    {
-      acceptNode: () => {
-        return NodeFilter.FILTER_ACCEPT;
-      },
-    },
-  );
+  const elementIter = doc.createNodeIterator(doc.body, NodeFilter.SHOW_ELEMENT);
 
   while ((node = elementIter.nextNode())) {
     const element = node as HTMLElement;
@@ -287,67 +273,75 @@ function sanitizeHtml(
     }
   }
 
-  // Prepend wrapper ID.
-  const bodyStyleList = doc.querySelectorAll('body style');
-  bodyStyleList.forEach(element => {
-    const styleElement = element as HTMLStyleElement;
-    const stylesheet = styleElement.sheet as CSSStyleSheet;
+  const styleList = doc.querySelectorAll('style');
+
+  if (styleList.length) {
+    const sanitizedStyle = doc.createElement('style');
+
+    doc.body.append(sanitizedStyle);
+
+    const sheet = sanitizedStyle.sheet!;
     const newRules: CSSRule[] = [];
 
-    if (!stylesheet.cssRules) {
-      styleElement.textContent = '';
-      return;
-    }
+    styleList.forEach(element => {
+      const styleElement = element as HTMLStyleElement;
+      const stylesheet = styleElement.sheet as CSSStyleSheet;
 
-    for (let i = 0; i < stylesheet.cssRules.length; i++) {
-      const rule = stylesheet.cssRules[i] as CSSStyleRule;
-
-      if ('selectorText' in rule) {
-        sanitizeCssRule(
-          rule,
-          id,
-          allowedSchemas,
-          allowedCssProperties,
-          preserveCssPriority,
-          rewriteExternalResources,
-        );
-        newRules.push(rule);
-      } else if ('cssRules' in rule && 'media' in rule) {
-        // According to https://www.caniemail.com/,
-        // out of all at-rules, Gmail only supports @media.
-        const mediaRule = rule as any as CSSMediaRule;
-        const newRulesMedia: CSSRule[] = [];
-
-        for (let i = 0; i < mediaRule.cssRules.length; i++) {
-          const rule = mediaRule.cssRules[i] as CSSStyleRule;
-
-          if (rule.type === rule.STYLE_RULE) {
-            sanitizeCssRule(
-              rule,
-              id,
-              allowedSchemas,
-              allowedCssProperties,
-              preserveCssPriority,
-              rewriteExternalResources,
-            );
-            newRulesMedia.push(rule);
-          }
-        }
-
-        while (mediaRule.cssRules.length > 0) {
-          mediaRule.deleteRule(0);
-        }
-
-        for (const rule of newRulesMedia) {
-          mediaRule.insertRule(rule.cssText, mediaRule.cssRules.length);
-        }
-
-        newRules.push(mediaRule);
+      if (!stylesheet.cssRules) {
+        styleElement.textContent = '';
+        return;
       }
-    }
 
-    styleElement.textContent = newRules.map(rule => rule.cssText).join('\n');
-  });
+      for (let i = 0; i < stylesheet.cssRules.length; i++) {
+        const rule = stylesheet.cssRules[i];
+
+        if (rule instanceof CSSStyleRule) {
+          sanitizeCssRule(
+            rule,
+            id,
+            allowedSchemas,
+            allowedCssProperties,
+            preserveCssPriority,
+            rewriteExternalResources,
+          );
+
+          newRules.push(rule);
+        } else if (rule instanceof CSSMediaRule) {
+          const idx = sheet.insertRule('@media {}', sheet.cssRules.length);
+          const sanitizedMediaRule = sheet.cssRules[idx] as CSSMediaRule;
+
+          // According to https://www.caniemail.com/,
+          // out of all at-rules, Gmail only supports @media.
+          const mediaRule = rule as any as CSSMediaRule;
+
+          for (let i = 0; i < mediaRule.cssRules.length; i++) {
+            const rule = mediaRule.cssRules[i];
+
+            if (rule instanceof CSSStyleRule) {
+              sanitizeCssRule(
+                rule,
+                id,
+                allowedSchemas,
+                allowedCssProperties,
+                preserveCssPriority,
+                rewriteExternalResources,
+              );
+              sanitizedMediaRule.insertRule(
+                rule.cssText,
+                sanitizedMediaRule.cssRules.length,
+              );
+            }
+          }
+
+          newRules.push(mediaRule);
+        }
+      }
+
+      styleElement.remove();
+    });
+
+    sanitizedStyle.textContent = newRules.map(rule => rule.cssText).join('\n');
+  }
 
   // Wrap body inside of a div with the generated ID.
   if (noWrapper) {
