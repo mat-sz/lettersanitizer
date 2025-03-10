@@ -1,6 +1,6 @@
 {
   "name": "lettersanitizer",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "DOM-based HTML email sanitizer for in-browser email rendering.",
   "type": "module",
   "main": "./lib/cjs/index.js",
