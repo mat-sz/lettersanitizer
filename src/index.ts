@@ -254,23 +254,25 @@ function sanitizeHtml(
         element.setAttribute('target', '_blank');
       }
     } else {
-      element.insertAdjacentHTML('afterend', element.innerHTML);
+      // Disallowed tag: mark, and unwrap only after traversal
       toRemove.push(element);
     }
   }
 
-  for (const element of toRemove) {
-    try {
-      try {
-        element.parentNode?.removeChild(element);
-      } catch {
-        element.outerHTML = '';
-      }
-    } catch {
-      try {
-        element.remove();
-      } catch {}
+  // Unwrap disallowed elements by moving their child nodes before them
+  // and then dropping the now-empty element.
+  // Iterate in reverse to start from the innermost elements
+  // and limit the size of the trees we move.
+  for (let i = toRemove.length - 1; i >= 0; i--) {
+    const element = toRemove[i];
+    const parent = element.parentNode;
+    if (!parent) continue; // already removed
+    // copy each of its children above it
+    while (element.firstChild) {
+      parent.insertBefore(element.firstChild, element);
     }
+    // then remove it
+    parent.removeChild(element);
   }
 
   const styleList = doc.querySelectorAll('style');
