@@ -1,5 +1,7 @@
 export const allowedTags = {
   a: ['class', 'href', 'id', 'style', 'target'],
+  abbr: [],
+  acronym: [],
   address: ['class', 'id', 'style'],
   b: ['class', 'id', 'style'],
   blockquote: ['class', 'id', 'style'],
@@ -31,6 +33,8 @@ export const allowedTags = {
   ],
   center: ['class', 'id', 'style'],
   dd: ['class', 'id', 'style'],
+  del: [],
+  dfn: [],
   div: ['align', 'class', 'dir', 'id', 'style'],
   dt: ['class', 'id', 'style'],
   em: ['class', 'id', 'style'],
@@ -64,7 +68,9 @@ export const allowedTags = {
   ol: ['class', 'dir', 'id', 'style', 'type', 'start', 'reversed'],
   p: ['align', 'class', 'dir', 'id', 'style'],
   pre: ['class', 'id', 'style'],
+  small: [],
   span: ['class', 'id', 'style'],
+  strike: [],
   strong: ['class', 'id', 'style'],
   style: [],
   sub: ['class', 'id', 'style'],
@@ -149,6 +155,7 @@ export const allowedTags = {
   ],
   u: ['class', 'id', 'style'],
   ul: ['class', 'dir', 'id', 'style'],
+  wbr: [],
 } as { [k: string]: string[] };
 
 export const removeWithContents = [
