@@ -400,4 +400,13 @@ b {background: red;}</style>`);
       ),
     ).toBe(`<style></style>`);
   });
+
+  // https://github.com/mat-sz/lettersanitizer/pull/10
+  // https://github.com/mat-sz/lettersanitizer/security/advisories/GHSA-hhw2-373g-hx77
+  it("doesn't crash with certain markups", () => {
+    const depth = 25;
+    const html =
+      '<article>'.repeat(depth) + 'Hello, world.' + '</article>'.repeat(depth);
+    expect(() => sanitize(html)).not.toThrow();
+  });
 });
