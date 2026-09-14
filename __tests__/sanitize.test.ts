@@ -409,4 +409,11 @@ b {background: red;}</style>`);
       '<article>'.repeat(depth) + 'Hello, world.' + '</article>'.repeat(depth);
     expect(() => sanitize(html)).not.toThrow();
   });
+
+  it('sanitizes HTML entities in CSS correctly', () => {
+    const html = '<style>a{font-family:"<"}</style>';
+    expect(sanitize(html, undefined, { noWrapper: true })).toBe(
+      '<style>a {font-family: "\\3c";}</style>',
+    );
+  });
 });

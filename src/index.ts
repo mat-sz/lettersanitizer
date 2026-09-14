@@ -342,7 +342,10 @@ function sanitizeHtml(
       styleElement.remove();
     });
 
-    sanitizedStyle.textContent = newRules.map(rule => rule.cssText).join('\n');
+    sanitizedStyle.textContent = newRules
+      .map(rule => rule.cssText)
+      .join('\n')
+      .replace(/</g, '\\3c');
   }
 
   // Wrap body inside of a div with the generated ID.
